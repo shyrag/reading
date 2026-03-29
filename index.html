@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Reading Wonderland</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  --sky: #E8F4FD;
+  --meadow: #A8D5A2;
+  --sunshine: #FFD966;
+  --sunset: #FF9F68;
+  --berry: #E87CA0;
+  --ocean: #6BB8E8;
+  --lavender: #C4A8E0;
+  --cream: #FFF8EC;
+  --bark: #5C4033;
+  --radius: 24px;
+  --radius-sm: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { touch-action: manipulation; }
+body {
+  font-family: 'Quicksand', sans-serif;
+  background: var(--cream);
+  color: var(--bark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle, #e8ddd0 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+h1, h2, h3, .letter-display, .word-display, .blend-display {
+  font-family: 'Fredoka', sans-serif;
+}
+
+button {
+  font-family: 'Quicksand', sans-serif;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 60px;
+  min-width: 60px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+}
+button:active { transform: scale(0.95); }
+
+.btn-primary { background: var(--ocean); color: white; box-shadow: 0 4px 0 #4a9bd4; }
+.btn-primary:active { box-shadow: 0 2px 0 #4a9bd4; transform: translateY(2px) scale(0.98); }
+.btn-success { background: var(--meadow); color: var(--bark); box-shadow: 0 4px 0 #7bba74; }
+.btn-success:active { box-shadow: 0 2px 0 #7bba74; transform: translateY(2px) scale(0.98); }
+.btn-warning { background: var(--sunshine); color: var(--bark); box-shadow: 0 4px 0 #e6c35a; }
+.btn-warning:active { box-shadow: 0 2px 0 #e6c35a; transform: translateY(2px) scale(0.98); }
+.btn-berry { background: var(--berry); color: white; box-shadow: 0 4px 0 #c96a88; }
+.btn-berry:active { box-shadow: 0 2px 0 #c96a88; transform: translateY(2px) scale(0.98); }
+.btn-sunset { background: var(--sunset); color: white; box-shadow: 0 4px 0 #e0885a; }
+.btn-sunset:active { box-shadow: 0 2px 0 #e0885a; transform: translateY(2px) scale(0.98); }
+.btn-lavender { background: var(--lavender); color: var(--bark); box-shadow: 0 4px 0 #a88ec4; }
+.btn-lavender:active { box-shadow: 0 2px 0 #a88ec4; transform: translateY(2px) scale(0.98); }
+
+.app-header {
+  background: linear-gradient(135deg, var(--ocean), var(--lavender));
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header h1 {
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  flex: 1;
+  text-align: center;
+}
+.header-stars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sunshine);
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-family: 'Fredoka', sans-serif;
+}
+.back-btn {
+  background: rgba(255,255,255,0.25);
+  color: white;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-size: 1.2rem;
+  box-shadow: none;
+}
+.back-placeholder { width: 48px; min-height: 48px; min-width: 48px; }
+
+.home-screen { padding: 20px; max-width: 600px; margin: 0 auto; }
+.home-title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 20px 0 8px;
+  background: linear-gradient(135deg, var(--sunset), var(--berry));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.home-subtitle { text-align: center; font-size: 1.1rem; margin-bottom: 24px; color: #8a7060; }
+.home-actions { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+.btn-settings { background: rgba(92,64,51,0.08); color: var(--bark); font-size: 0.95rem; padding: 12px 20px; border-radius: 14px; border: 2px solid rgba(92,64,51,0.15); min-height: 48px; opacity: 0.7; transition: all 0.2s; }
+.btn-settings:hover { opacity: 1; transform: translateY(-1px); }
+.btn-settings.btn-reset { border-color: rgba(232,124,124,0.3); color: #c06060; }
+
+.level-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 3px solid transparent;
+}
+.level-card:active { transform: scale(0.98); }
+.level-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.4); }
+.level-card.locked:active { transform: none; }
+
+.level-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-info h3 { font-size: 1.1rem; margin-bottom: 4px; }
+.level-info p { font-size: 0.85rem; color: #8a7060; }
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #f0e8de;
+  border-radius: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.level-badge {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 10px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.screen { display: none; animation: fadeIn 0.3s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.level-container { padding: 16px; max-width: 700px; margin: 0 auto; padding-bottom: 40px; }
+
+.alphabet-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+.letter-display {
+  font-size: 8rem;
+  line-height: 1;
+  margin: 10px 0;
+  transition: color 0.3s;
+}
+.letter-case-toggle {
+  font-size: 1.2rem;
+  color: #8a7060;
+  margin-bottom: 10px;
+  font-family: 'Fredoka', sans-serif;
+}
+.letter-emoji { font-size: 3rem; margin: 10px 0; }
+.letter-word { font-size: 1.3rem; color: #8a7060; font-weight: 600; }
+
+.letter-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.nav-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.letter-counter { font-size: 1rem; font-weight: 600; color: #8a7060; }
+
+.mode-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.mode-tab {
+  min-height: 48px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 1rem;
+  background: #f0e8de;
+  color: var(--bark);
+  box-shadow: none;
+}
+.mode-tab.active {
+  background: var(--ocean);
+  color: white;
+}
+
+.quiz-container { text-align: center; }
+.quiz-prompt { font-size: 4rem; margin: 20px 0; }
+.quiz-question { font-size: 1.3rem; margin-bottom: 20px; font-weight: 600; }
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.quiz-option {
+  font-size: 1.8rem;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: 0 3px 0 #e0d8ce;
+  font-family: 'Fredoka', sans-serif;
+  transition: background 0.2s;
+}
+.quiz-option.correct { background: var(--meadow); color: white; box-shadow: 0 3px 0 #7bba74; }
+.quiz-option.wrong { background: #f0a0a0; color: white; box-shadow: 0 3px 0 #d08888; }
+
+.quiz-score { font-size: 1.1rem; margin-top: 16px; font-weight: 600; color: #8a7060; }
+
+.blend-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.blend-cell {
+  background: white;
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.3rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.blend-cell:active { transform: scale(0.93); }
+.blend-cell.visited { background: var(--sky); }
+.blend-cell.playing { background: var(--sunshine); transform: scale(1.1); }
+
+.blend-consonant-label {
+  grid-column: 1 / -1;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  padding: 8px 0 4px;
+  color: var(--bark);
+  font-weight: 600;
+  border-bottom: 2px dashed #e0d8ce;
+  margin: 4px 0;
+}
+
+.vowel-header {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  color: var(--berry);
+  font-weight: 600;
+}
+
+.word-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+.word-display {
+  font-size: 4.5rem;
+  line-height: 1.1;
+  margin: 10px 0;
+  letter-spacing: 4px;
+}
+.word-display .letter-highlight {
+  display: inline-block;
+  transition: transform 0.2s, color 0.2s;
+}
+.word-display .letter-highlight.active {
+  color: var(--sunset);
+  transform: scale(1.3) translateY(-4px);
+}
+.word-emoji { font-size: 3.5rem; margin: 10px 0; }
+.word-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.word-family-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.family-tab {
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  background: #f0e8de;
+  color: var(--bark);
+  box-shadow: none;
+}
+.family-tab.active { background: var(--berry); color: white; }
+
+.match-prompt { font-size: 1.3rem; margin-bottom: 16px; font-weight: 600; text-align: center; }
+.match-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto 16px;
+}
+.match-option {
+  font-size: 2.5rem;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: 0 3px 0 #e0d8ce;
+  transition: background 0.2s;
+}
+.match-option.correct { background: var(--meadow); }
+.match-option.wrong { background: #f0a0a0; }
+
+.spell-container { text-align: center; }
+.spell-prompt { font-size: 3rem; margin: 10px 0; }
+.spell-slots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+  min-height: 70px;
+  flex-wrap: wrap;
+}
+.spell-slot {
+  width: 56px;
+  height: 62px;
+  border: 3px dashed #d0c8be;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2rem;
+  background: white;
+  transition: border-color 0.2s, background 0.2s;
+}
+.spell-slot.filled { border-color: var(--ocean); border-style: solid; background: var(--sky); }
+.spell-slot.correct-slot { border-color: var(--meadow); background: #e8f5e6; }
+.spell-slot.wrong-slot { border-color: #e88; background: #fde8e8; animation: shake 0.4s ease; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.spell-letters {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.spell-letter-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.8rem;
+  background: var(--sunshine);
+  color: var(--bark);
+  box-shadow: 0 3px 0 #e6c35a;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spell-letter-btn.used { opacity: 0.3; pointer-events: none; }
+
+.sentence-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+  text-align: center;
+}
+.sentence-emoji { font-size: 3rem; margin-bottom: 12px; }
+.sentence-text {
+  font-size: 1.8rem;
+  font-family: 'Fredoka', sans-serif;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.sentence-text .word-tap {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.sentence-text .word-tap:active { transform: scale(0.95); }
+.sentence-text .word-tap.highlight { background: var(--sunshine); }
+
+.sentence-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.scramble-target { font-size: 1.2rem; margin-bottom: 12px; font-weight: 600; color: #8a7060; }
+.scramble-built {
+  min-height: 60px;
+  background: #f8f2e8;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.scramble-word {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s;
+  font-family: 'Fredoka', sans-serif;
+}
+.scramble-word:active { transform: scale(0.93); }
+.scramble-word.in-bank { background: white; box-shadow: 0 2px 0 #e0d8ce; }
+.scramble-word.in-sentence { background: var(--sky); box-shadow: 0 2px 0 #b8d4e8; }
+
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confettiFall 1.5s ease-out forwards;
+}
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
+}
+
+.floating-star {
+  position: fixed;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 9999;
+  animation: floatUp 1.2s ease-out forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0) scale(0.5); }
+  50% { opacity: 1; transform: translateY(-60px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-120px) scale(0.8); }
+}
+
+.unlock-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, var(--sunshine), var(--sunset));
+  color: white;
+  padding: 32px 48px;
+  border-radius: var(--radius);
+  text-align: center;
+  z-index: 10000;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+  animation: popIn 0.5s ease forwards;
+  font-family: 'Fredoka', sans-serif;
+}
+.unlock-banner h2 { font-size: 1.8rem; margin-bottom: 8px; }
+.unlock-banner p { font-size: 1.1rem; }
+@keyframes popIn { 0% { transform: translate(-50%,-50%) scale(0); } 60% { transform: translate(-50%,-50%) scale(1.1); } 100% { transform: translate(-50%,-50%) scale(1); } }
+
+.feedback-correct {
+  color: var(--meadow);
+  font-size: 2rem;
+  font-family: 'Fredoka', sans-serif;
+  animation: popIn 0.3s ease;
+}
+.feedback-wrong {
+  color: #e88;
+  font-size: 1.5rem;
+  font-family: 'Fredoka', sans-serif;
+  animation: shake 0.4s ease;
+}
+
+@media (max-width: 500px) {
+  .letter-display { font-size: 6rem; }
+  .word-display { font-size: 3rem; }
+  .sentence-text { font-size: 1.4rem; }
+  .blend-cell { font-size: 1rem; padding: 10px 4px; }
+  .spell-slot { width: 46px; height: 52px; font-size: 1.6rem; }
+  .spell-letter-btn { width: 48px; height: 48px; font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <button class="back-btn" id="backBtn" onclick="goHome()" style="display:none">&#8592;</button>
+  <div class="back-placeholder" id="backPlaceholder"></div>
+  <h1 id="headerTitle">Reading Wonderland</h1>
+  <div class="header-stars"><span>&#11088;</span> <span id="starCount">0</span></div>
+</header>
+
+<div id="homeScreen" class="screen active">
+  <div class="home-screen">
+    <h2 class="home-title">Reading Wonderland</h2>
+    <p class="home-subtitle">Tap a level to begin your adventure!</p>
+    <div id="levelCards"></div>
+    <div class="home-actions">
+      <button class="btn-settings" onclick="unlockAll()">🔓 Unlock All Levels</button>
+      <button class="btn-settings btn-reset" onclick="resetProgress()">🔄 Reset Progress</button>
+    </div>
+  </div>
+</div>
+
+<div id="level1Screen" class="screen"><div class="level-container" id="level1Content"></div></div>
+<div id="level2Screen" class="screen"><div class="level-container" id="level2Content"></div></div>
+<div id="level3Screen" class="screen"><div class="level-container" id="level3Content"></div></div>
+<div id="level4Screen" class="screen"><div class="level-container" id="level4Content"></div></div>
+<div id="level5Screen" class="screen"><div class="level-container" id="level5Content"></div></div>
+<div id="level6Screen" class="screen"><div class="level-container" id="level6Content"></div></div>
+
+<script>
+// ===================================================================
+// DATA
+// ===================================================================
+
+const ALPHABET_DATA = [
+  { letter:'A', word:'Apple', emoji:'🍎', phoneme:'aah' },
+  { letter:'B', word:'Bear', emoji:'🐻', phoneme:'buh' },
+  { letter:'C', word:'Cat', emoji:'🐱', phoneme:'cuh' },
+  { letter:'D', word:'Dog', emoji:'🐶', phoneme:'duh' },
+  { letter:'E', word:'Elephant', emoji:'🐘', phoneme:'eh' },
+  { letter:'F', word:'Fish', emoji:'🐟', phoneme:'fuh' },
+  { letter:'G', word:'Grape', emoji:'🍇', phoneme:'guh' },
+  { letter:'H', word:'House', emoji:'🏠', phoneme:'huh' },
+  { letter:'I', word:'Ice cream', emoji:'🍦', phoneme:'ih' },
+  { letter:'J', word:'Juice', emoji:'🧃', phoneme:'juh' },
+  { letter:'K', word:'Kite', emoji:'🪁', phoneme:'cuh' },
+  { letter:'L', word:'Lion', emoji:'🦁', phoneme:'luh' },
+  { letter:'M', word:'Moon', emoji:'🌙', phoneme:'muh' },
+  { letter:'N', word:'Nest', emoji:'🪺', phoneme:'nuh' },
+  { letter:'O', word:'Orange', emoji:'🍊', phoneme:'aw' },
+  { letter:'P', word:'Penguin', emoji:'🐧', phoneme:'puh' },
+  { letter:'Q', word:'Queen', emoji:'👸', phoneme:'quuh' },
+  { letter:'R', word:'Rainbow', emoji:'🌈', phoneme:'ruh' },
+  { letter:'S', word:'Sun', emoji:'☀️', phoneme:'suh' },
+  { letter:'T', word:'Tree', emoji:'🌳', phoneme:'tuh' },
+  { letter:'U', word:'Umbrella', emoji:'☂️', phoneme:'uh' },
+  { letter:'V', word:'Violin', emoji:'🎻', phoneme:'vuh' },
+  { letter:'W', word:'Whale', emoji:'🐋', phoneme:'wuh' },
+  { letter:'X', word:'Xylophone', emoji:'🎵', phoneme:'ecks' },
+  { letter:'Y', word:'Yarn', emoji:'🧶', phoneme:'yuh' },
+  { letter:'Z', word:'Zebra', emoji:'🦓', phoneme:'zuh' }
+];
+
+const CONSONANTS = ['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','y','z'];
+const VOWELS_LIST = ['a','e','i','o','u'];
+
+// Phoneme map for sounding out
+const PHONEME_MAP = {
+  a:'aah',b:'buh',c:'cuh',d:'duh',e:'eh',f:'fuh',g:'guh',h:'huh',i:'ih',j:'juh',k:'cuh',
+  l:'luh',m:'muh',n:'nuh',o:'aw',p:'puh',q:'quuh',r:'ruh',s:'suh',t:'tuh',u:'uh',
+  v:'vuh',w:'wuh',x:'ecks',y:'yuh',z:'zuh'
+};
+
+const EMOJI_MAP = {
+  cat:'🐱',bat:'🦇',rat:'🐀',hen:'🐔',pig:'🐷',dog:'🐶',fox:'🦊',bug:'🐛',cow:'🐄',ant:'🐜',bee:'🐝',owl:'🦉',ram:'🐏',yak:'🐂',emu:'🦤',elk:'🦌',
+  fish:'🐟',bird:'🐦',bear:'🐻',frog:'🐸',duck:'🦆',deer:'🦌',goat:'🐐',lion:'🦁',swan:'🦢',crab:'🦀',worm:'🪱',wolf:'🐺',lamb:'🐑',mole:'🦫',seal:'🦭',
+  tiger:'🐯',snake:'🐍',horse:'🐴',mouse:'🐭',whale:'🐋',eagle:'🦅',sheep:'🐑',zebra:'🦓',shark:'🦈',puppy:'🐶',robin:'🐦',snail:'🐌',
+  ham:'🍖',jam:'🍯',pie:'🥧',egg:'🥚',nut:'🥜',yam:'🍠',fig:'🫘',gum:'🍬',bun:'🍞',cup:'🥤',
+  cake:'🎂',rice:'🍚',corn:'🌽',meat:'🍖',bean:'🫘',pear:'🍐',plum:'🍑',milk:'🥛',soup:'🍲',taco:'🌮',
+  apple:'🍎',bread:'🍞',candy:'🍬',grape:'🍇',lemon:'🍋',melon:'🍈',peach:'🍑',pizza:'🍕',salad:'🥗',steak:'🥩',cream:'🍦',honey:'🍯',juice:'🧃',sauce:'🥫',sugar:'🍬',toast:'🍞',wheat:'🌾',fruit:'🍎',
+  leg:'🦵',lip:'👄',ear:'👂',eye:'👁',arm:'💪',
+  hand:'🤚',face:'😊',feet:'🦶',hair:'💇',head:'🤯',knee:'🦵',neck:'🫁',nose:'👃',
+  heart:'❤️',mouth:'👄',teeth:'🦷',thumb:'👍',brain:'🧠',cheek:'😊',
+  bag:'👜',bed:'🛏',box:'📦',bus:'🚌',can:'🥫',fan:'🪭',hat:'🎩',jar:'🫙',key:'🔑',map:'🗺',mop:'🧹',mug:'☕',net:'🥅',pan:'🍳',pen:'🖊',pin:'📌',pot:'🍲',rug:'🧶',sun:'☀️',top:'🔝',van:'🚐',web:'🕸',
+  ball:'⚽',bell:'🔔',bike:'🚲',boat:'⛵',bone:'🦴',book:'📖',boot:'🥾',bowl:'🥣',bulb:'💡',cage:'🗝',card:'🃏',cart:'🛒',cave:'🕳',coat:'🧥',coin:'🪙',comb:'🪮',cone:'🍦',cube:'🧊',desk:'🪑',dice:'🎲',dish:'🍽',dock:'⚓',door:'🚪',drum:'🥁',fire:'🔥',flag:'🏁',fork:'🍴',gate:'🚧',gift:'🎁',glow:'✨',glue:'🧴',gold:'🪙',harp:'🎵',heel:'👠',hive:'🐝',hole:'🕳',hook:'🪝',horn:'📯',hose:'🚿',iron:'🔧',jail:'🔒',kite:'🪁',knot:'🪢',lace:'🪡',lamp:'💡',leaf:'🍃',lens:'🔍',lock:'🔒',logo:'🏷',mask:'😷',maze:'🌀',moon:'🌙',nail:'🔩',nest:'🪺',note:'🎵',oven:'🫕',pack:'📦',page:'📄',path:'🛤',pipe:'🪈',pool:'🏊',pump:'⛽',ring:'💍',road:'🛣',rock:'🪨',roof:'🏠',rope:'🪢',rose:'🌹',ruby:'💎',sack:'💰',sand:'🏖',seed:'🌱',shed:'🏚',ship:'🚢',shoe:'👟',shop:'🏪',sign:'🪧',sink:'🚰',soap:'🧼',sock:'🧦',sofa:'🛋',star:'⭐',stem:'🌿',tank:'🪖',tape:'📼',tent:'⛺',tire:'🛞',toad:'🐸',tool:'🔧',trap:'🪤',tray:'🍽',tree:'🌳',tube:'🧪',vase:'🏺',vest:'🦺',vine:'🌿',wall:'🧱',wand:'🪄',wave:'🌊',well:'🪣',wing:'🪽',wood:'🪵',wool:'🧶',yard:'🏡',
+  chair:'🪑',chalk:'📝',chess:'♟',child:'👧',clock:'🕐',cloth:'🧵',cloud:'☁️',clown:'🤡',coach:'🏋️',comet:'☄️',couch:'🛋',crown:'👑',dance:'💃',dress:'👗',drink:'🥤',fence:'🏗',flame:'🔥',flute:'🎵',frame:'🖼',glass:'🥃',globe:'🌍',glove:'🧤',graph:'📊',grass:'🌱',guard:'💂',house:'🏠',knife:'🔪',light:'💡',medal:'🏅',money:'💰',music:'🎵',ocean:'🌊',paint:'🎨',paper:'📄',pearl:'🦪',phone:'📱',photo:'📸',piano:'🎹',plane:'✈️',plant:'🪴',plate:'🍽',purse:'👛',queen:'👸',quilt:'🛏',radio:'📻',river:'🏞',robot:'🤖',scale:'⚖️',scarf:'🧣',shell:'🐚',shirt:'👕',skirt:'👗',slide:'🛝',smile:'😊',smoke:'💨',snack:'🍿',space:'🚀',spoon:'🥄',stamp:'📮',stone:'🪨',store:'🏪',storm:'⛈',stove:'🫕',sword:'⚔️',table:'🪑',torch:'🔦',towel:'🛁',tower:'🗼',track:'🛤',train:'🚂',trash:'🗑',truck:'🚚',tulip:'🌷',video:'📹',wagon:'🛻',watch:'⌚',water:'💧',wheel:'🎡',witch:'🧙',world:'🌍',
+  log:'🪵',mud:'🫗',sky:'🌤',
+  dawn:'🌅',dusk:'🌇',dust:'💨',hill:'⛰',lake:'🏞',land:'🏔',lawn:'🌿',moss:'🍀',park:'🏞',peak:'⛰',pond:'🏞',rain:'🌧',snow:'❄️',soil:'🌱',surf:'🏄',tide:'🌊',
+  beach:'🏖',bloom:'🌸',brook:'🏞',cliff:'🏔',coral:'🪸',creek:'🏞',earth:'🌍',field:'🌾',flood:'🌊',frost:'❄️',grove:'🌳',marsh:'🏝',north:'🧭',south:'🧭',swamp:'🏝',trail:'🥾',
+  boy:'👦',dad:'👨',mom:'👩',man:'👨',
+  baby:'👶',boss:'👔',cook:'👨‍🍳',girl:'👧',hero:'🦸',king:'👑',lady:'👩',nurse:'👩‍⚕️',pilot:'👨‍✈️',rider:'🏇',saint:'😇',thief:'🦹',woman:'👩',
+  cry:'😢',hug:'🤗',run:'🏃',sit:'🪑',
+  blow:'💨',burn:'🔥',call:'📞',draw:'🎨',drop:'💧',earn:'💰',fall:'🍂',feel:'💭',find:'🔍',flow:'🌊',give:'🎁',grow:'🌱',hear:'👂',hide:'🫣',hold:'🤲',hunt:'🎯',join:'🤝',jump:'🦘',keep:'📦',kick:'🦶',kiss:'💋',know:'💡',lead:'🏅',love:'❤️',make:'🛠',move:'🚶',open:'📭',play:'🎮',pull:'🏋️',push:'👐',read:'📖',ride:'🏇',rise:'🌅',roll:'🎲',rush:'🏃',save:'💾',sell:'🏷',send:'📤',show:'🎭',sing:'🎤',skip:'🦘',spin:'🌀',stay:'🏠',swim:'🏊',talk:'💬',vote:'🗳',wait:'⏳',wake:'⏰',walk:'🚶',wash:'🧼',wish:'🌠',work:'💼',wrap:'🎁',
+  catch:'🎣',chase:'🏃',check:'✅',climb:'🧗',count:'🔢',cover:'🛡',crash:'💥',crawl:'🐛',cross:'✝️',dream:'💭',drive:'🚗',fight:'🥊',float:'🎈',grill:'🍖',guess:'🤔',laugh:'😂',learn:'📚',leave:'🚪',plant:'🌱',point:'👉',raise:'🙋',reach:'🤚',serve:'🍽',shout:'📢',sleep:'😴',speak:'🗣',spell:'✨',stand:'🧍',steal:'🦹',sweep:'🧹',swing:'🏌️',teach:'👩‍🏫',think:'🤔',throw:'🤾',touch:'👆',trade:'🤝',treat:'🍬',weave:'🧶',write:'✍️',
+  gym:'🏋️',zoo:'🦁',
+  barn:'🏚',cafe:'☕',city:'🏙',farm:'🧑‍🌾',fort:'🏰',home:'🏠',isle:'🏝',mall:'🏬',mine:'⛏',port:'⚓',town:'🏘',
+  cabin:'🏚',court:'⚖️',hotel:'🏨',manor:'🏰',plaza:'🏙',ranch:'🤠',
+  day:'📅',fun:'🎉',hot:'🌡',ice:'🧊',joy:'😄',new:'✨',old:'👴',sad:'😢',win:'🏆',yes:'✅',
+  back:'🔙',blue:'🔵',bold:'💪',calm:'😌',cold:'🥶',cool:'😎',dark:'🌑',dead:'💀',deep:'🌊',easy:'👌',fair:'⚖️',fast:'⚡',fear:'😨',fine:'👌',five:'5️⃣',flat:'📏',four:'4️⃣',free:'🆓',full:'📦',glad:'😊',good:'👍',gray:'🩶',half:'½',hard:'🪨',high:'🔝',huge:'🦣',hurt:'🤕',idea:'💡',kind:'🤗',last:'🔚',late:'⏰',less:'➖',life:'🧬',like:'👍',long:'📏',loud:'📢',luck:'🍀',mild:'🌤',more:'➕',much:'📈',nine:'9️⃣',once:'1️⃣',only:'☝️',over:'🔝',pair:'👯',past:'⏪',pink:'🩷',poor:'💸',pure:'✨',race:'🏁',rare:'💎',real:'💯',rest:'😴',rich:'💰',safe:'🔒',same:'🟰',self:'🪞',side:'➡️',size:'📐',slow:'🐌',soft:'☁️',some:'🔢',soon:'⏳',sour:'🍋',sure:'✅',tall:'📏',thin:'🪡',tiny:'🔬',true:'✅',type:'⌨️',used:'♻️',vast:'🌌',very:'‼️',warm:'🌡',weak:'😵',wide:'↔️',wild:'🐾',wise:'🦉',zero:'0️⃣',
+  about:'💭',above:'⬆️',after:'➡️',again:'🔄',along:'➡️',angry:'😠',begin:'▶️',below:'⬇️',black:'⬛',blind:'🫣',brave:'🦸',brief:'📝',broad:'↔️',brown:'🟤',bunch:'🍇',cheap:'🏷',chief:'👨‍💼',civil:'⚖️',class:'🏫',clean:'✨',clear:'💎',close:'🚪',crazy:'🤪',early:'🌅',eight:'8️⃣',empty:'📭',enemy:'⚔️',enjoy:'😊',enter:'🚪',equal:'🟰',error:'❌',essay:'📝',every:'💯',exact:'🎯',extra:'➕',faith:'🙏',fancy:'✨',fifty:'5️⃣',final:'🏁',first:'🥇',force:'💪',forty:'4️⃣',found:'🔍',fresh:'🌿',front:'⬆️',funny:'😂',giant:'🦣',grace:'😇',grand:'👑',great:'🌟',green:'🟢',gross:'🤢',group:'👥',grown:'🌱',guilt:'😞',happy:'😊',harsh:'💢',haste:'⚡',heavy:'🏋️',honor:'🎖',human:'🧑',humor:'😂',hurry:'🏃',image:'🖼',inner:'💫',input:'⌨️',issue:'📋',joint:'🔗',judge:'⚖️',known:'💡',large:'📏',later:'⏰',legal:'⚖️',level:'📊',limit:'🚧',local:'📍',lodge:'🏚',logic:'🧠',loose:'🪢',lower:'⬇️',loyal:'🤝',lucky:'🍀',lunar:'🌙',lying:'🤥',magic:'✨',match:'🔥',mayor:'🏛',media:'📺',mercy:'🙏',minor:'➖',minus:'➖',model:'🧍',month:'📅',moral:'⚖️',motor:'🏎',mount:'⛰',movie:'🎬',music:'🎵',naive:'🤷',nasty:'🤢',naval:'⚓',nerve:'😬',never:'🚫',night:'🌙',noble:'👑',noise:'📢',noted:'📝',novel:'📖',occur:'💡',often:'🔄',olive:'🫒',orbit:'🌐',other:'👉',outer:'🌌',owner:'🏠',panic:'😱',party:'🎉',pause:'⏸',peace:'☮️',phase:'🔄',piece:'🧩',pixel:'🖥',place:'📍',plain:'🏜',point:'👉',polar:'🐻‍❄️',pound:'💷',power:'⚡',press:'📰',price:'🏷',pride:'🦁',prime:'🥇',print:'🖨',prior:'⏪',prize:'🏆',proof:'📋',proud:'💪',prove:'✅',pulse:'💓',pupil:'👁',quest:'🗺',quick:'⚡',quiet:'🤫',quota:'📊',quote:'💬',radar:'📡',range:'📏',rapid:'⚡',ratio:'📊',reach:'🤚',react:'😮',realm:'👑',rebel:'✊',refer:'👉',reign:'👑',relax:'😌',reply:'💬',rigid:'🪨',risky:'⚠️',rival:'🤼',rocky:'🪨',rogue:'🦹',rough:'🪨',round:'🔵',route:'🗺',royal:'👑',rugby:'🏉',ruler:'📏',rural:'🌾',silly:'🤪',since:'⏰',sixth:'6️⃣',sixty:'6️⃣',skill:'🎯',skull:'💀',sleek:'✨',small:'🔬',smart:'🧠',solid:'🪨',solve:'🧩',sorry:'😔',sound:'🔊',state:'🏛',steel:'⚙️',steep:'⛰',stern:'😤',still:'🤫',stock:'📈',stout:'🏋️',study:'📚',stuff:'📦',style:'💅',suite:'🏨',sunny:'☀️',super:'🦸',surge:'🌊',swarm:'🐝',sweet:'🍭',swift:'⚡',teddy:'🧸',theme:'🎨',there:'👉',these:'👉',thick:'📏',thing:'📦',think:'🤔',third:'🥉',those:'👉',three:'3️⃣',tight:'🤏',tired:'😴',title:'📰',today:'📅',total:'📊',tough:'💪',toxic:'☠️',trade:'🤝',trend:'📈',trial:'⚖️',tribe:'👥',trick:'🎩',truly:'✅',trust:'🤝',truth:'✅',twice:'2️⃣',twist:'🌀',uncle:'👨',under:'⬇️',union:'🤝',unite:'🤝',unity:'🤝',until:'⏳',upper:'⬆️',upset:'😢',urban:'🏙',usage:'📊',usual:'📋',utter:'🗣',valid:'✅',value:'💎',vault:'🏦',verse:'📜',vigor:'💪',vinyl:'💿',virus:'🦠',visit:'🏠',vital:'❤️',vivid:'🌈',vocal:'🎤',voice:'🗣',voter:'🗳',waist:'👗',waste:'🗑',water:'💧',weary:'😩',wedge:'🔺',weird:'🤪',where:'📍',which:'🤔',while:'⏳',white:'⬜',whole:'🔵',whose:'🤔',widen:'↔️',witch:'🧙',women:'👩',world:'🌍',worry:'😟',worse:'📉',worst:'📉',worth:'💎',would:'🤔',wound:'🩹',wrath:'😡',wreck:'💥',wrist:'⌚',write:'✍️',wrong:'❌',yacht:'🛥',yield:'🚧',young:'👶',youth:'👦',
+  cab:'🚕',cap:'🧢',cob:'🌽',cod:'🐟',cog:'⚙️',cop:'👮',cot:'🛏',cub:'🐻',dam:'🌊',den:'🏚',dip:'🫕',dot:'⚫',fin:'🦈',fit:'💪',fog:'🌫',fur:'🧸',gap:'🕳',gel:'🧴',gem:'💎',gut:'🫁',hop:'🐰',hub:'🔗',hut:'🛖',ink:'🖊',ivy:'🌿',jog:'🏃',jot:'📝',jug:'🫗',kit:'🧰',lid:'📦',lot:'🔢',mat:'🧹',mix:'🔀',mob:'👥',nap:'😴',nod:'😊',oil:'🛢',orb:'🔮',ore:'⛏',pad:'📝',paw:'🐾',peg:'🪵',pet:'🐾',pit:'🕳',pod:'🫛',pub:'🍺',pug:'🐶',pun:'😄',pup:'🐶',rag:'🧹',rim:'🔵',rod:'🎣',rot:'🍂',row:'🚣',rub:'🧹',rut:'🛤',sap:'🌳',sew:'🧵',shy:'😳',sir:'🤵',sip:'🥤',six:'6️⃣',ski:'⛷',sob:'😭',sow:'🌱',spa:'♨️',spy:'🕵️',sub:'🥖',sum:'➕',tab:'📋',tag:'🏷',tan:'☀️',tap:'🚰',tar:'🛢',tea:'🍵',ten:'🔟',tie:'👔',tin:'🥫',tip:'💡',toe:'🦶',ton:'🏋️',tow:'🚗',toy:'🧸',tub:'🛁',tug:'🚢',urn:'⚱️',vet:'👩‍⚕️',vow:'💍',wag:'🐕',war:'⚔️',wax:'🕯',wig:'💇',wit:'🧠',woe:'😢',wok:'🍳',won:'🏆',yap:'🗣',zip:'🤐',
+};
+
+// ===================================================================
+// WORD BANKS
+// ===================================================================
+
+const CVC_WORDS = {
+  'Short A': ['cab','cat','bat','hat','mat','sat','rat','fat','pat','can','man','fan','ran','van','pan','tan','bag','rag','tag','wag','nag','gap','map','nap','tap','cap','lap','sap','zap','bad','dad','had','mad','sad','pad','lad','jam','ham','ram','dam','yam','tab','jab','dab','gab','gas','has','lax','wax','tax'],
+  'Short E': ['bed','red','fed','led','wed','hen','men','ten','pen','den','bet','get','jet','let','met','net','pet','set','vet','wet','beg','leg','peg','keg','gem','hem','yes','yet','web','pep','rep'],
+  'Short I': ['big','dig','fig','jig','pig','rig','wig','bit','fit','hit','kit','lit','pit','sit','wit','bin','din','fin','gin','kin','pin','sin','tin','win','dip','hip','lip','nip','rip','sip','tip','zip','bid','did','hid','kid','lid','rid','dim','him','rim','mix','six','fix','fib','bib','rib'],
+  'Short O': ['bog','cog','dog','fog','hog','jog','log','box','fox','cop','hop','mop','pop','top','cob','gob','job','mob','rob','sob','cod','god','nod','pod','rod','con','don','son','ton','won','cot','dot','got','hot','lot','not','pot','rot','odd','off'],
+  'Short U': ['bug','dug','hug','jug','mug','pug','rug','tug','bud','cud','dud','mud','but','cut','gut','hut','jut','nut','rut','tut','bun','fun','gun','nun','pun','run','sun','bus','cup','pup','sup','cub','hub','pub','rub','sub','tub','gum','hum','mum','rum','sum','yum','fur','bur']
+};
+
+const FOUR_LETTER_WORDS = {
+  'CVCC': ['band','bump','camp','damp','dust','fast','felt','fish','gift','gold','gust','hand','help','hump','hunt','jest','jump','just','kept','kind','lamp','land','last','left','lend','lift','limp','list','lock','lost','luck','lump','mast','melt','milk','mind','mint','miss','mock','mold','most','much','must','nest','next','pack','past','pick','pink','pond','pump','raft','ramp','rank','rest','rich','ring','risk','rock','romp','rush','rust','sand','self','send','shop','sick','silk','sing','sink','skip','sock','soft','song','such','sunk','task','tell','tend','tent','test','tick','tilt','tock','told','tuck','turn','tusk','vest','wand','well','went','west','wick','wild','will','wind','wing','wish','with','wolf','yell','yelp','zinc','bank','belt','bend','bent','best','bill','bolt','bond','born','bulk','bull','bush','bust','call','calm','card','cart','cash','cast','cell','chin','clip','coal','coil','cold','comb','cone','cook','cool','cord','cork','corn','cost','curl','dark','deal','deck','deep','dent','desk','dill','dock','doll','done','dump','dunk','dusk','each','earn','east','edit','fall','farm','fear','feed','feel','fell','fill','film','find','fine','firm','fist','flag','flat','fold','folk','fond','food','fool','foot','ford','fork','form','fort','foul','full','fund','gain','gale','gang','gash','gill','glad','glen','glow','goal','golf','gone','good','grab','grim','grin','grit','gulf','gull','gush','hack','hail','hair','half','hall','halt','hang','hank','harp','hash','heal','heap','hear','heat','heed','high','hike','hill','hilt','hint','hold','hole','home','hood','hook','hoop','hope','horn','hose','howl','hull','hung','hurl','inch','iron','itch','jack','jail','jeer','jerk','jilt','jolt','junk','keen','keep','keel','kelp','kick','kill','king','kiss','knob','knot','lace','lack','laid','lake','lame','lane','lard','lark','lash','late','lawn','lead','leaf','lean','leak','leer','lens','less','lick','lied','life','like','limb','lime','line','link','lion','lips','list','live','load','loaf','loan','lobe','loft','lone','long','look','lord','lore','lose','loss','loud','lure','lurk','lush','made','mail','main','make','male','mall','mane','many','mark','mash','mask','mass','mate','maze','meal','mean','meat','meet','memo','mend','menu','mere','mess','mice','mild','mile','mill','mine','mode','mood','moon','more','moss','moth','move','mull','muse','myth','nail','name','navy','near','neat','neck','need','nine','node','none','noon','norm','nose','note','noun','nude'],
+  'CCVC': ['blab','bled','blip','blot','blur','brag','brim','bred','bran','clam','clap','clip','clog','clot','club','crab','crib','crop','drag','drip','drop','drum','flag','flap','flat','flip','flog','flop','frog','from','glad','glen','glob','glum','grab','grid','grim','grin','grip','grit','plan','plod','plop','plot','plug','plum','plus','pram','prep','prim','prod','prop','scan','scat','scum','shed','ship','shin','shop','shot','shut','skid','skim','skin','skip','skit','slag','slam','slap','slat','sled','slim','slip','slit','slob','slop','slot','slow','slug','slum','smog','snap','snip','snob','snot','snub','snug','span','spar','spec','sped','spin','spit','spot','spun','spur','stab','stag','star','stem','step','stir','stop','stub','stud','stun','swan','swim','swam','trap','trek','trim','trip','trod','trot','twig','twin','whip','writ'],
+  'Common': ['also','back','ball','bean','bear','beat','been','bell','best','bike','bird','blow','blue','boat','body','bone','book','born','boss','both','bowl','burn','busy','buzz','cake','call','came','care','case','cave','city','coat','come','cool','dare','dark','date','dawn','days','dead','deal','dear','deep','deer','does','done','door','down','draw','each','ease','east','easy','edge','even','ever','eyes','face','fact','fail','fair','fall','farm','fear','feed','feel','feet','fell','file','fill','film','find','fine','fire','firm','five','flag','flew','flow','food','fool','foot','ford','form','four','free','fuel','full','fury','fuse','game','gate','gave','gaze','gear','give','glow','goat','goes','gold','gone','good','grab','gray','grew','grow','gulf','gust','guys','hair','half','hall','halt','hang','hard','harm','hate','have','haze','head','hear','heat','heel','here','hero','hide','high','hike','hill','hint','hire','hold','hole','home','hood','hook','hope','horn','hose','hour','huge','hung','hunt','hurt','idea','iron','isle','item','jack','jail','jean','join','joke','jolt','jury','keen','keep','keys','kick','kill','kind','king','kiss','knee','knew','knit','knob','knot','know','lace','lack','laid','lake','lame','lane','lark','late','lawn','lead','leaf','lean','leap','left','lend','lens','less','lied','life','lift','like','limb','lime','line','link','lion','lips','live','load','loan','lock','logo','lone','long','look','lord','lose','loss','lost','loud','love','luck','lump','lung','lure','lurk','made','mail','main','make','male','mall','mane','many','mark','mass','mate','maze','meal','mean','meat','meet','melt','memo','menu','mere','mess','mice','mild','mile','milk','mill','mind','mine','mint','miss','mode','mold','mood','moon','more','moss','most','moth','move','much','muse','must','myth','nail','name','navy','near','neat','neck','need','nine','node','none','noon','norm','nose','note','noun','nude','odds','once','only','onto','open','oral','over','owed','pace','pack','page','paid','pain','pair','pale','palm','pane','park','part','pass','past','path','peak','peel','peer','pick','pier','pile','pine','pink','pipe','plan','play','plod','plot','plug','poem','poet','poke','pole','poll','polo','pond','pool','poor','pope','pore','pork','port','pose','post','pour','pray','prey','pull','pump','pure','push','quit','race','rack','rage','raid','rail','rain','rake','ramp','rang','rank','rare','rash','rate','read','real','rear','reef','reel','rely','rent','rest','rice','rich','ride','rift','ring','rise','risk','road','roam','rock','rode','role','roll','roof','room','root','rope','rose','ruin','rule','rush','sack','safe','sage','said','sail','sake','sale','salt','same','sand','sane','sang','save','seal','seat','seed','seek','seem','seen','self','sell','send','sent','shed','shin','ship','shoe','shop','shot','show','shut','sick','side','sift','sigh','sign','silk','sing','sink','site','size','slam','slap','sled','slid','slim','slip','slot','slow','snap','snob','snow','soak','soap','soar','sock','soft','soil','sold','sole','some','song','soon','sore','sort','soul','sour','spin','spit','spot','star','stay','stem','step','stew','stir','stop','stud','such','suit','sung','sunk','sure','surf','swim','swum','tack','tail','take','tale','talk','tall','tame','tank','tape','tart','task','team','tear','tell','tend','tent','term','test','text','than','that','them','then','they','thin','this','thus','tick','tide','tidy','tied','tier','tile','till','tilt','time','tiny','tire','toad','toes','told','toll','tomb','tone','took','tool','tops','tore','torn','toss','tour','town','trap','tray','tree','trim','trio','trip','trod','true','tube','tuck','tune','turf','turn','twin','type','ugly','undo','unit','unto','upon','urge','used','user','vain','vale','vane','vary','vast','veil','vein','vent','verb','very','vest','vice','view','vine','void','volt','vote','wade','wage','wail','wait','wake','walk','wall','wand','want','ward','warm','warn','warp','wart','wash','wave','wavy','waxy','ways','weak','wear','weed','week','weep','weld','well','went','were','west','what','when','whom','wick','wide','wife','wild','will','wilt','wily','wind','wine','wing','wink','wipe','wire','wise','wish','wisp','with','woke','wolf','womb','wood','wool','word','wore','work','worm','worn','wrap','wren','writ','yard','yarn','year','yell','yoga','yoke','your','zeal','zero','zinc','zone','zoom']
+};
+
+const FIVE_LETTER_WORDS = {
+  'A-E': ['about','above','after','again','along','apple','angry','agent','agree','ahead','allow','among','apart','asset','avoid','awake','award','aware'],
+  'B-D': ['begin','below','black','blank','blast','blaze','blend','blind','block','bloom','board','boost','bound','brain','brand','brave','bread','break','brick','bride','brief','bring','broad','broke','brook','brown','brush','build','bunch','burst','buyer','cabin','candy','catch','cause','chain','chair','chalk','champ','charm','chase','cheap','check','cheek','cheer','chess','chest','chief','child','chill','chose','chunk','civil','claim','clamp','clash','class','clean','clear','click','cliff','climb','cling','clips','clock','clone','close','cloth','cloud','clown','coach','coast','comet','coral','couch','could','count','court','cover','crack','craft','crane','crash','crawl','crazy','cream','creek','creep','crime','crisp','cross','crowd','crown','crush','curve','cycle','dairy','dance','dream','dress','dried','drift','drill','drink','drive','drops','drown','drums','drunk'],
+  'E-G': ['eagle','early','earth','eight','elbow','elder','elect','empty','ended','enemy','enjoy','enter','equal','error','essay','every','exact','exams','extra','faint','fairy','faith','fancy','feast','fence','fiber','field','fifth','fifty','fight','final','first','flame','flash','flesh','flies','flint','float','flock','flood','floor','flour','flown','fluid','flush','flute','focus','folly','force','forge','forms','forth','forty','forum','found','frame','frank','fraud','fresh','front','frost','froze','fruit','funny','giant','glass','gleam','globe','gloom','glory','gloss','glove','grace','grade','grain','grand','grant','grape','graph','grasp','grass','grave','great','green','greet','grief','grill','grind','groan','groom','gross','group','grove','growl','grown','guard','guess','guide','guilt','guise'],
+  'H-L': ['happy','harsh','haste','haven','heart','heavy','hedge','herbs','honey','honor','hoped','horse','hotel','house','human','humor','hurry','image','imply','index','indie','inner','input','issue','ivory','jelly','jewel','joint','jolly','judge','juice','keeps','knife','knock','known','label','large','later','laugh','layer','learn','least','leave','legal','lemon','level','light','limit','linen','liner','lives','local','lodge','logic','loose','lover','lower','loyal','lucky','lunar','lunch','lying'],
+  'M-P': ['magic','manor','maple','march','match','mayor','media','melon','mercy','merge','merit','meter','might','minor','minus','model','money','month','moral','motor','mount','mouse','mouth','movie','muddy','music','naive','nasty','naval','nerve','never','night','ninth','noble','noise','north','noted','novel','nurse','nylon','occur','ocean','offer','often','olive','opera','orbit','organ','other','outer','owner','oxide','paint','panel','panic','paper','party','paste','patch','pause','peace','peach','pearl','penny','phase','phone','photo','piano','piece','pilot','pitch','pixel','pizza','place','plain','plane','plant','plate','plaza','plead','pluck','plumb','plume','plump','plunk','plush','point','polar','porch','pouch','pound','power','press','price','pride','prime','print','prior','prize','probe','prone','proof','prose','proud','prove','pulse','punch','pupil','puppy','purse'],
+  'Q-S': ['quake','queen','query','quest','queue','quick','quiet','quilt','quirk','quota','quote','radar','radio','raise','rally','ranch','range','rapid','ratio','reach','react','realm','rebel','refer','reign','relax','relay','renew','repay','reply','rider','ridge','rifle','rigid','rinse','risen','risky','rival','river','roast','robin','robot','rocky','rogue','roomy','roots','rough','round','route','royal','rugby','ruler','rural','saint','salad','sauce','scale','scare','scene','scent','scope','score','scout','scrap','serve','seven','shade','shake','shall','shame','shape','share','shark','sharp','shave','sheep','sheer','sheet','shelf','shell','shift','shine','shirt','shock','shoot','shore','short','shout','shown','shrub','shrug','sight','silly','since','sixth','sixty','skate','skill','skirt','skull','slash','slave','sleep','sleek','slice','slide','slope','small','smart','smash','smell','smile','smith','smoke','snack','snake','snare','sneak','solar','solid','solve','sorry','sound','south','space','spare','spark','speak','speed','spell','spend','spent','spice','spill','spine','spoke','spoon','sport','spray','squad','stack','staff','stage','stain','stair','stake','stale','stalk','stall','stamp','stand','stare','start','state','stays','steak','steal','steam','steel','steep','steer','stern','stick','still','sting','stink','stock','stole','stone','stood','stool','stoop','store','storm','story','stout','stove','strap','straw','stray','strip','stuck','study','stuff','stump','stung','stunk','style','sugar','suite','sunny','super','surge','swamp','swarm','swear','sweat','sweep','sweet','swept','swift','swing','swirl','swore','sworn','swung'],
+  'T-Z': ['teddy','teeth','their','theme','there','these','thick','thief','thigh','thing','think','third','thorn','those','three','threw','throw','thumb','tidal','tiger','tight','timer','tired','title','toast','today','token','total','touch','tough','towel','tower','towns','toxic','trace','track','trade','trail','train','trait','trash','treat','trend','trial','tribe','trick','tried','troop','truck','truly','trunk','trust','truth','tulip','tumor','twice','twist','ultra','uncle','under','union','unite','unity','until','upper','upset','urban','usage','usual','utter','valid','value','vapor','vault','verse','video','vigor','vinyl','viola','virus','visit','vital','vivid','vocal','vodka','voice','voter','wagon','waist','waste','watch','water','waves','weary','weave','wedge','weigh','weird','whale','wheat','wheel','where','which','while','whine','white','whole','whose','widen','width','witch','woman','women','world','worry','worse','worst','worth','would','wound','wrath','wreck','wrist','write','wrong','wrote','yacht','yield','young','yours','youth','zebra']
+};
+
+const SENTENCES = [
+  { text:"The cat sat on the mat.", emoji:"🐱" },
+  { text:"The big red bus went fast.", emoji:"🚌" },
+  { text:"I can see the sun and the moon.", emoji:"☀️🌙" },
+  { text:"The dog ran to the park.", emoji:"🐶" },
+  { text:"She has a cup of milk.", emoji:"🥛" },
+  { text:"The fish is in the pond.", emoji:"🐟" },
+  { text:"He put his hat on his head.", emoji:"🎩" },
+  { text:"The bird can sing a song.", emoji:"🐦🎵" },
+  { text:"We went to the shop.", emoji:"🛒" },
+  { text:"The frog sat on a log.", emoji:"🐸🪵" },
+  { text:"My dog is big and brown.", emoji:"🐶" },
+  { text:"The fox hid in the den.", emoji:"🦊" },
+  { text:"I like to eat cake.", emoji:"🎂" },
+  { text:"The hen sat on her nest.", emoji:"🐔🪺" },
+  { text:"We had fun in the sun.", emoji:"☀️🎉" },
+  { text:"The pig is in the mud.", emoji:"🐷" },
+  { text:"He has a red ball.", emoji:"🔴⚽" },
+  { text:"I see a big tree.", emoji:"🌳" },
+  { text:"The bug is on the rug.", emoji:"🐛" },
+  { text:"She can run and jump.", emoji:"🏃🦘" },
+  { text:"The man has a van.", emoji:"👨🚐" },
+  { text:"I like my pet cat.", emoji:"🐱❤️" },
+  { text:"The sun is hot.", emoji:"☀️🌡" },
+  { text:"He got a new hat.", emoji:"🎩✨" },
+  { text:"I can see a star.", emoji:"⭐" },
+  { text:"The duck is in the pond.", emoji:"🦆" },
+  { text:"We like to read books.", emoji:"📖" },
+  { text:"The cow is on the farm.", emoji:"🐄🧑‍🌾" },
+  { text:"I ate a red apple.", emoji:"🍎" },
+  { text:"She has a blue dress.", emoji:"👗" },
+  { text:"The boat is on the lake.", emoji:"⛵🏞" },
+  { text:"He can ride a bike.", emoji:"🚲" },
+  { text:"I love my mom and dad.", emoji:"👩👨❤️" },
+  { text:"The bell rang at noon.", emoji:"🔔" },
+  { text:"We play in the yard.", emoji:"🏡🎉" },
+  { text:"The moon is out at night.", emoji:"🌙" },
+  { text:"She went to the store.", emoji:"🏪" },
+  { text:"He has a big smile.", emoji:"😊" },
+  { text:"The bird flew up high.", emoji:"🐦⬆️" },
+  { text:"I can see the rain.", emoji:"🌧" },
+  { text:"The cat and dog play.", emoji:"🐱🐶" },
+  { text:"We like ice cream.", emoji:"🍦" },
+  { text:"The baby is asleep.", emoji:"👶😴" },
+  { text:"He has ten fingers.", emoji:"🤚🤚" },
+  { text:"She loves to dance.", emoji:"💃" },
+  { text:"The train goes fast.", emoji:"🚂💨" },
+  { text:"I like to draw.", emoji:"🎨" },
+  { text:"The snake is long.", emoji:"🐍" },
+  { text:"We went to the beach.", emoji:"🏖" },
+  { text:"She found a shell.", emoji:"🐚" },
+  { text:"The wind blows hard.", emoji:"💨" },
+  { text:"I lost my shoe.", emoji:"👟" },
+  { text:"He made a sand castle.", emoji:"🏖🏰" },
+  { text:"The bear likes honey.", emoji:"🐻🍯" },
+  { text:"She ate a banana.", emoji:"🍌" },
+  { text:"The horse ran fast.", emoji:"🐴💨" },
+  { text:"I can jump high.", emoji:"🦘" },
+  { text:"We sang a happy song.", emoji:"🎵😊" },
+  { text:"The mouse hid in a hole.", emoji:"🐭🕳" },
+  { text:"He reads a book each day.", emoji:"📖" },
+  { text:"She can swim in the pool.", emoji:"🏊" },
+  { text:"The kite flew in the sky.", emoji:"🪁🌤" },
+  { text:"I like to play with blocks.", emoji:"🧱" },
+  { text:"The flower is pink and red.", emoji:"🌸" },
+  { text:"He is five years old.", emoji:"5️⃣🎂" },
+  { text:"We bake cookies.", emoji:"🍪" },
+  { text:"The car is on the road.", emoji:"🚗🛣" },
+  { text:"She walks to school.", emoji:"🚶🏫" },
+  { text:"The ant is very small.", emoji:"🐜🔬" },
+  { text:"I have a good friend.", emoji:"🤝" },
+  { text:"He sleeps in his bed.", emoji:"🛏😴" },
+  { text:"The lamp gives light.", emoji:"💡" },
+  { text:"She plays the piano.", emoji:"🎹" },
+  { text:"We eat lunch at noon.", emoji:"🍽🕐" },
+  { text:"The whale is in the sea.", emoji:"🐋🌊" },
+  { text:"He found a gold coin.", emoji:"🪙" },
+  { text:"I like warm soup.", emoji:"🍲🌡" },
+  { text:"The owl comes out at night.", emoji:"🦉🌙" },
+  { text:"She made a paper plane.", emoji:"✈️📄" },
+  { text:"The rabbit hops fast.", emoji:"🐰" },
+  { text:"We sit under the tree.", emoji:"🌳" },
+  { text:"He has a pet fish.", emoji:"🐟" },
+  { text:"I brush my teeth.", emoji:"🦷🪥" },
+  { text:"The cloud is white and soft.", emoji:"☁️" },
+  { text:"She sings in the choir.", emoji:"🎤🎵" },
+  { text:"The door is open.", emoji:"🚪" },
+  { text:"I hear a loud drum.", emoji:"🥁📢" },
+  { text:"He ties his shoe.", emoji:"👟" },
+  { text:"The king wears a crown.", emoji:"👑" },
+  { text:"We plant seeds in spring.", emoji:"🌱" },
+  { text:"She has a red bike.", emoji:"🚲" },
+  { text:"The snow falls in winter.", emoji:"❄️" },
+  { text:"I drink a glass of water.", emoji:"💧🥃" },
+  { text:"He climbs the tall hill.", emoji:"⛰🧗" },
+  { text:"The clock says it is time.", emoji:"🕐" },
+  { text:"We go to the zoo.", emoji:"🦁" },
+  { text:"She likes grapes and plums.", emoji:"🍇🍑" },
+  { text:"The ship sails on the sea.", emoji:"🚢🌊" },
+  { text:"I look at the bright stars.", emoji:"⭐🌟" },
+  { text:"He waves at his friend.", emoji:"👋🤝" },
+  { text:"The cake has pink icing.", emoji:"🎂🩷" },
+  { text:"We fly a kite at the park.", emoji:"🪁🏞" },
+  { text:"She picks a rose.", emoji:"🌹" },
+  { text:"The frog jumps in the lake.", emoji:"🐸🏞" },
+  { text:"I help my mom cook.", emoji:"👩‍🍳🍽" },
+  { text:"He threw the ball to me.", emoji:"⚽" },
+  { text:"The kitten plays with yarn.", emoji:"🐱🧶" },
+  { text:"We paint a picture.", emoji:"🎨🖼" },
+  { text:"She tells a funny joke.", emoji:"😂" },
+  { text:"The bee makes sweet honey.", emoji:"🐝🍯" },
+  { text:"I wish upon a star.", emoji:"🌠⭐" },
+  { text:"Look at the pretty flowers.", emoji:"🌸🌻" },
+  { text:"The puppy wags its tail.", emoji:"🐶" },
+  { text:"Time to go to sleep.", emoji:"😴🛏" },
+];
+
+// ===================================================================
+// STATE MANAGEMENT
+// ===================================================================
+
+const LEVEL_CONFIG = [
+  { id:1, title:'The Alphabet', desc:'26 letters and their sounds', emoji:'🔤', color:'var(--ocean)' },
+  { id:2, title:'Two-Letter Sounds', desc:'Consonant + vowel blends', emoji:'🔊', color:'var(--meadow)' },
+  { id:3, title:'Three-Letter Words', desc:'CVC words by vowel family', emoji:'📖', color:'var(--sunset)' },
+  { id:4, title:'Four-Letter Words', desc:'Longer words and patterns', emoji:'📚', color:'var(--berry)' },
+  { id:5, title:'Five+ Letter Words', desc:'Big words for big readers', emoji:'🏆', color:'var(--lavender)' },
+  { id:6, title:'Sentences', desc:'Read full sentences', emoji:'📝', color:'var(--sunshine)' },
+];
+
+let state;
+
+function defaultState() {
+  return { stars:0, unlockedLevels:[1], l1:{visited:[],quizCorrect:0}, l2:{visited:[]}, l3:{correct:0}, l4:{correct:0}, l5:{correct:0}, l6:{correct:0} };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('readingWonderland');
+    if (!raw) return defaultState();
+    const s = JSON.parse(raw);
+    if (!s.unlockedLevels) return defaultState();
+    return s;
+  } catch { return defaultState(); }
+}
+
+function saveState() {
+  localStorage.setItem('readingWonderland', JSON.stringify(state));
+  document.getElementById('starCount').textContent = state.stars;
+}
+
+function addStars(n) {
+  state.stars += n;
+  saveState();
+  floatStar();
+}
+
+function isUnlocked(id) { return state.unlockedLevels.includes(id); }
+
+function tryUnlock(nextLevel) {
+  if (isUnlocked(nextLevel)) return;
+  let unlock = false;
+  if (nextLevel === 2 && (state.l1.visited.length >= 13 || state.l1.quizCorrect >= 5)) unlock = true;
+  if (nextLevel === 3 && state.l2.visited.length >= 20) unlock = true;
+  if (nextLevel === 4 && state.l3.correct >= 30) unlock = true;
+  if (nextLevel === 5 && state.l4.correct >= 50) unlock = true;
+  if (nextLevel === 6 && state.l5.correct >= 50) unlock = true;
+  if (unlock) {
+    state.unlockedLevels.push(nextLevel);
+    saveState();
+    showUnlockBanner(nextLevel);
+    confetti();
+  }
+}
+
+function unlockAll() {
+  state.unlockedLevels = [1,2,3,4,5,6];
+  saveState();
+  renderHome();
+  confetti();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress? Stars and unlocks will be lost.')) return;
+  state = defaultState();
+  saveState();
+  renderHome();
+}
+
+function showUnlockBanner(id) {
+  const cfg = LEVEL_CONFIG[id-1];
+  const div = document.createElement('div');
+  div.className = 'unlock-banner';
+  div.innerHTML = `<h2>${cfg.emoji} Level ${id} Unlocked!</h2><p>${cfg.title}</p>`;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 2500);
+}
+
+// ===================================================================
+// SPEECH
+// ===================================================================
+
+let preferredVoice = null;
+
+function initVoice() {
+  const pick = () => {
+    const voices = speechSynthesis.getVoices();
+    preferredVoice = voices.find(v => v.name === 'Samantha' && v.lang.startsWith('en'))
+      || voices.find(v => v.lang.startsWith('en-US') && /female|samantha|karen|victoria/i.test(v.name))
+      || voices.find(v => v.lang.startsWith('en-US'))
+      || voices.find(v => v.lang.startsWith('en'))
+      || voices[0] || null;
+  };
+  pick();
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pick;
+}
+initVoice();
+
+function speak(text, rate, onEnd) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate || 0.75;
+  u.pitch = 1.1;
+  if (preferredVoice) u.voice = preferredVoice;
+  if (onEnd) u.onend = onEnd;
+  speechSynthesis.speak(u);
+}
+
+function speakPhoneme(ph) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(ph);
+  u.rate = 0.5;
+  u.pitch = 1.05;
+  u.volume = 1;
+  if (preferredVoice) u.voice = preferredVoice;
+  speechSynthesis.speak(u);
+}
+
+// ===================================================================
+// ANIMATIONS
+// ===================================================================
+
+function confetti() {
+  const colors = ['#FF9F68','#FFD966','#E87CA0','#6BB8E8','#A8D5A2','#C4A8E0'];
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}vw;top:-10px;background:${colors[i%6]};animation-delay:${Math.random()*0.5}s;animation-duration:${1+Math.random()}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
+}
+
+function floatStar() {
+  const el = document.createElement('div');
+  el.className = 'floating-star';
+  el.textContent = '⭐';
+  const r = document.getElementById('starCount').getBoundingClientRect();
+  el.style.left = r.left + 'px';
+  el.style.top = r.top + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+// ===================================================================
+// NAVIGATION
+// ===================================================================
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const isHome = id === 'homeScreen';
+  document.getElementById('backBtn').style.display = isHome ? 'none' : 'block';
+  document.getElementById('backPlaceholder').style.display = isHome ? 'block' : 'none';
+  const map = {homeScreen:'Reading Wonderland',level1Screen:'The Alphabet',level2Screen:'Two-Letter Sounds',level3Screen:'Three-Letter Words',level4Screen:'Four-Letter Words',level5Screen:'Five+ Letter Words',level6Screen:'Sentences'};
+  document.getElementById('headerTitle').textContent = map[id] || '';
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  speechSynthesis.cancel();
+  showScreen('homeScreen');
+  renderHome();
+}
+
+function openLevel(id) {
+  if (!isUnlocked(id)) return;
+  showScreen('level'+id+'Screen');
+  const renderers = [null, renderLevel1, renderLevel2, renderLevel3, renderLevel4, renderLevel5, renderLevel6];
+  renderers[id]();
+}
+
+// ===================================================================
+// HOME SCREEN
+// ===================================================================
+
+function renderHome() {
+  saveState();
+  const c = document.getElementById('levelCards');
+  c.innerHTML = '';
+  LEVEL_CONFIG.forEach(cfg => {
+    const locked = !isUnlocked(cfg.id);
+    const pct = getLevelProgress(cfg.id);
+    const card = document.createElement('div');
+    card.className = 'level-card' + (locked ? ' locked' : '');
+    card.onclick = () => openLevel(cfg.id);
+    card.innerHTML = `
+      <div class="level-icon" style="background:${cfg.color}">${cfg.emoji}</div>
+      <div class="level-info">
+        <h3>Level ${cfg.id}: ${cfg.title}</h3>
+        <p>${cfg.desc}</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+      </div>
+      ${locked ? '<span class="level-badge" style="background:#aaa">🔒</span>' : `<span class="level-badge" style="background:${cfg.color}">${Math.round(pct)}%</span>`}`;
+    c.appendChild(card);
+  });
+}
+
+function getLevelProgress(id) {
+  const clamp = v => Math.min(100, Math.max(0, v));
+  if (id===1) return clamp((state.l1.visited.length/26)*70 + (state.l1.quizCorrect/5)*30);
+  if (id===2) return clamp((state.l2.visited.length/95)*100);
+  if (id===3) return clamp((state.l3.correct/30)*100);
+  if (id===4) return clamp((state.l4.correct/50)*100);
+  if (id===5) return clamp((state.l5.correct/50)*100);
+  if (id===6) return clamp((state.l6.correct/20)*100);
+  return 0;
+}
+
+// ===================================================================
+// LEVEL 1: ALPHABET
+// ===================================================================
+
+let l1 = { idx:0, mode:'browse', upper:true, quizData:null, quizOpts:[] };
+
+function renderLevel1() {
+  const c = document.getElementById('level1Content');
+  c.innerHTML = `
+    <div class="mode-tabs">
+      <button class="mode-tab ${l1.mode==='browse'?'active':''}" onclick="l1Mode('browse')">Browse</button>
+      <button class="mode-tab ${l1.mode==='quiz'?'active':''}" onclick="l1Mode('quiz')">Quiz</button>
+    </div>
+    <div id="l1Body"></div>`;
+  l1.mode === 'browse' ? renderL1Browse() : renderL1Quiz();
+}
+
+function l1Mode(m) { l1.mode = m; renderLevel1(); }
+
+function renderL1Browse() {
+  const d = ALPHABET_DATA[l1.idx];
+  if (!state.l1.visited.includes(d.letter)) { state.l1.visited.push(d.letter); saveState(); tryUnlock(2); }
+  const ch = l1.upper ? d.letter : d.letter.toLowerCase();
+  const colors = ['#FF9F68','#E87CA0','#6BB8E8','#A8D5A2','#C4A8E0','#FFD966'];
+  document.getElementById('l1Body').innerHTML = `
+    <div class="alphabet-card">
+      <div class="letter-case-toggle">${d.letter} ${d.letter.toLowerCase()}</div>
+      <div class="letter-display" style="color:${colors[l1.idx%6]}">${ch}</div>
+      <div class="letter-emoji">${d.emoji}</div>
+      <div class="letter-word">${d.word}</div>
+      <div class="letter-btns">
+        <button class="btn-primary" onclick="speak('${d.letter}')">🔊 Name</button>
+        <button class="btn-sunset" onclick="speakPhoneme('${d.phoneme}')">🗣 Sound</button>
+        <button class="btn-lavender" onclick="l1.upper=!l1.upper;renderL1Browse()">Aa</button>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn btn-primary" onclick="l1Nav(-1)">&#9664;</button>
+      <span class="letter-counter">${l1.idx+1} / 26 &nbsp; ✅ ${state.l1.visited.length}</span>
+      <button class="nav-btn btn-primary" onclick="l1Nav(1)">&#9654;</button>
+    </div>`;
+}
+
+function l1Nav(dir) { l1.idx = (l1.idx + dir + 26) % 26; renderL1Browse(); }
+
+function renderL1Quiz() {
+  if (!l1.quizData) l1NewQuiz();
+  const d = l1.quizData;
+  document.getElementById('l1Body').innerHTML = `
+    <div class="quiz-container">
+      <div class="quiz-prompt">${d.emoji}</div>
+      <div class="quiz-question">What letter does "${d.word}" start with?</div>
+      <div class="quiz-options" id="l1QO">${l1.quizOpts.map(o => `<button class="quiz-option" data-val="${o}">${o}</button>`).join('')}</div>
+      <div class="quiz-score">Quiz Score: ${state.l1.quizCorrect} ⭐</div>
+    </div>`;
+  document.querySelectorAll('#l1QO .quiz-option').forEach(btn => {
+    btn.onclick = () => l1CheckQuiz(btn, btn.dataset.val, d.letter);
+  });
+}
+
+function l1NewQuiz() {
+  const i = Math.floor(Math.random()*26);
+  l1.quizData = ALPHABET_DATA[i];
+  const opts = [l1.quizData.letter];
+  while (opts.length < 4) { const r = ALPHABET_DATA[Math.floor(Math.random()*26)].letter; if (!opts.includes(r)) opts.push(r); }
+  l1.quizOpts = shuffle(opts);
+}
+
+function l1CheckQuiz(el, picked, correct) {
+  if (el.parentElement.querySelector('.correct')) return;
+  el.parentElement.querySelectorAll('.quiz-option').forEach(b => {
+    if (b.dataset.val === correct) b.classList.add('correct');
+    else if (b === el) b.classList.add('wrong');
+    b.style.pointerEvents = 'none';
+  });
+  if (picked === correct) { state.l1.quizCorrect++; addStars(1); tryUnlock(2); }
+  setTimeout(() => { l1.quizData = null; renderL1Quiz(); }, 1200);
+}
+
+// ===================================================================
+// LEVEL 2: TWO-LETTER BLENDS
+// ===================================================================
+
+function renderLevel2() {
+  const c = document.getElementById('level2Content');
+  let html = `<p style="text-align:center;margin-bottom:12px;font-weight:600;color:#8a7060">Explored: ${state.l2.visited.length} / 95</p>`;
+  html += `<div class="vowel-header">${VOWELS_LIST.map(v=>`<div>${v}</div>`).join('')}</div>`;
+  html += '<div class="blend-grid">';
+  CONSONANTS.forEach(con => {
+    html += `<div class="blend-consonant-label">${con.toUpperCase()}</div>`;
+    VOWELS_LIST.forEach(vow => {
+      const b = con+vow;
+      const vis = state.l2.visited.includes(b);
+      html += `<div class="blend-cell ${vis?'visited':''}" id="bl-${b}" data-blend="${b}">${b}</div>`;
+    });
+  });
+  html += '</div>';
+  c.innerHTML = html;
+  c.querySelectorAll('.blend-cell[data-blend]').forEach(el => {
+    el.onclick = () => playBlend(el.dataset.blend);
+  });
+}
+
+function playBlend(blend) {
+  if (!state.l2.visited.includes(blend)) { state.l2.visited.push(blend); saveState(); tryUnlock(3); }
+  const el = document.getElementById('bl-'+blend);
+  if (el) { el.classList.add('playing','visited'); }
+  // Update counter
+  const p = document.getElementById('level2Content').querySelector('p');
+  if (p) p.textContent = 'Explored: ' + state.l2.visited.length + ' / 95';
+
+  speak(blend, 0.6, () => { if (el) el.classList.remove('playing'); });
+}
+
+// ===================================================================
+// GENERIC WORD LEVEL RENDERER (Levels 3, 4, 5)
+// ===================================================================
+
+function createWordLevel(levelNum, wordData, stateKey, nextLevel, threshold) {
+  const wl = { family: Object.keys(wordData)[0], mode:'browse', idx:0, matchWord:null, matchOpts:[], spellWord:null, spellInput:[], spellLetters:[], spellUsed:[] };
+
+  function allWords() { return wordData[wl.family] || []; }
+  function allWordsFlat() { return Object.values(wordData).flat(); }
+
+  function render() {
+    const c = document.getElementById('level'+levelNum+'Content');
+    const families = Object.keys(wordData);
+    let html = `
+      <div class="mode-tabs">
+        <button class="mode-tab ${wl.mode==='browse'?'active':''}" data-m="browse">Browse</button>
+        <button class="mode-tab ${wl.mode==='match'?'active':''}" data-m="match">Match 🎯</button>
+        <button class="mode-tab ${wl.mode==='spell'?'active':''}" data-m="spell">Spell ✏️</button>
+      </div>`;
+    if (families.length > 1) {
+      html += '<div class="word-family-tabs">' + families.map(f => `<button class="family-tab ${wl.family===f?'active':''}" data-f="${f}">${f}</button>`).join('') + '</div>';
+    }
+    html += `<p style="text-align:center;margin-bottom:12px;font-weight:600;color:#8a7060">Correct: ${state[stateKey].correct}${nextLevel ? ' / '+threshold+' to unlock Level '+nextLevel : ''}</p>`;
+    html += '<div id="wlBody'+levelNum+'"></div>';
+    c.innerHTML = html;
+
+    c.querySelectorAll('.mode-tab').forEach(b => { b.onclick = () => { wl.mode = b.dataset.m; render(); }; });
+    c.querySelectorAll('.family-tab').forEach(b => { b.onclick = () => { wl.family = b.dataset.f; wl.idx = 0; wl.matchWord = null; wl.spellWord = null; render(); }; });
+
+    if (wl.mode === 'browse') renderBrowse();
+    else if (wl.mode === 'match') renderMatch();
+    else renderSpell();
+  }
+
+  function renderBrowse() {
+    const words = allWords();
+    if (!words.length) return;
+    wl.idx = Math.min(wl.idx, words.length-1);
+    const word = words[wl.idx];
+    const emoji = EMOJI_MAP[word] || '';
+    const letters = word.split('').map((ch,i) => `<span class="letter-highlight" id="wlh${levelNum}-${i}">${ch}</span>`).join('');
+    const body = document.getElementById('wlBody'+levelNum);
+    body.innerHTML = `
+      <div class="word-card">
+        ${emoji ? '<div class="word-emoji">'+emoji+'</div>' : ''}
+        <div class="word-display">${letters}</div>
+        <div class="word-btns">
+          <button class="btn-primary" id="wlSay">🔊 Say it</button>
+          <button class="btn-sunset" id="wlSound">🗣 Sound it out</button>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn btn-primary" id="wlPrev">&#9664;</button>
+        <span class="letter-counter">${wl.idx+1} / ${words.length}</span>
+        <button class="nav-btn btn-primary" id="wlNext">&#9654;</button>
+      </div>`;
+    body.querySelector('#wlSay').onclick = () => speak(word);
+    body.querySelector('#wlSound').onclick = () => soundOutWord(word, levelNum);
+    body.querySelector('#wlPrev').onclick = () => { wl.idx = (wl.idx-1+words.length)%words.length; renderBrowse(); };
+    body.querySelector('#wlNext').onclick = () => { wl.idx = (wl.idx+1)%words.length; renderBrowse(); };
+  }
+
+  function renderMatch() {
+    if (!wl.matchWord) newMatch();
+    const hasEmoji = !!EMOJI_MAP[wl.matchWord];
+    const body = document.getElementById('wlBody'+levelNum);
+    body.innerHTML = `
+      <div class="word-card">
+        <div class="match-prompt">Listen and pick the right ${hasEmoji ? 'picture' : 'word'}!</div>
+        <button class="btn-primary" id="matchHear" style="margin-bottom:16px">🔊 Hear the word</button>
+        <div class="match-options">${wl.matchOpts.map((opt,i) => {
+          const display = EMOJI_MAP[opt] || opt;
+          return `<button class="match-option" data-idx="${i}" data-word="${opt}">${display}</button>`;
+        }).join('')}</div>
+      </div>`;
+    body.querySelector('#matchHear').onclick = () => speak(wl.matchWord);
+    body.querySelectorAll('.match-option').forEach(btn => {
+      btn.onclick = () => {
+        if (body.querySelector('.match-option.correct')) return;
+        const picked = btn.dataset.word;
+        body.querySelectorAll('.match-option').forEach(b => {
+          if (b.dataset.word === wl.matchWord) b.classList.add('correct');
+          else if (b === btn && picked !== wl.matchWord) b.classList.add('wrong');
+          b.style.pointerEvents = 'none';
+        });
+        if (picked === wl.matchWord) { state[stateKey].correct++; addStars(1); if (nextLevel) tryUnlock(nextLevel); saveState(); }
+        setTimeout(() => { wl.matchWord = null; renderMatch(); }, 1200);
+      };
+    });
+    speak(wl.matchWord);
+  }
+
+  function newMatch() {
+    const all = allWordsFlat();
+    const withE = all.filter(w => EMOJI_MAP[w]);
+    const pool = withE.length >= 4 ? withE : all;
+    wl.matchWord = pool[Math.floor(Math.random()*pool.length)];
+    const opts = [wl.matchWord];
+    while (opts.length < 4) { const r = pool[Math.floor(Math.random()*pool.length)]; if (!opts.includes(r)) opts.push(r); }
+    wl.matchOpts = shuffle(opts);
+  }
+
+  function renderSpell() {
+    if (!wl.spellWord) newSpell();
+    const emoji = EMOJI_MAP[wl.spellWord] || '';
+    const body = document.getElementById('wlBody'+levelNum);
+    const slots = wl.spellWord.split('').map((_,i) => {
+      const ch = wl.spellInput[i];
+      return `<div class="spell-slot ${ch?'filled':''}">${ch||''}</div>`;
+    }).join('');
+    const letters = wl.spellLetters.map((ch,i) => `<button class="spell-letter-btn ${wl.spellUsed[i]?'used':''}" data-si="${i}">${ch}</button>`).join('');
+    body.innerHTML = `
+      <div class="word-card spell-container">
+        ${emoji ? '<div class="spell-prompt">'+emoji+'</div>' : '<div class="spell-prompt" style="font-size:1.3rem;color:#8a7060">Spell the word you hear</div>'}
+        <button class="btn-primary" id="spellHear" style="margin-bottom:12px">🔊 Hear it</button>
+        <div class="spell-slots">${slots}</div>
+        <div class="spell-letters">${letters}</div>
+        <button class="btn-warning" id="spellClear" style="margin-top:8px">Clear</button>
+      </div>`;
+    body.querySelector('#spellHear').onclick = () => speak(wl.spellWord);
+    body.querySelector('#spellClear').onclick = () => { clearSpell(); renderSpell(); };
+    body.querySelectorAll('.spell-letter-btn').forEach(btn => {
+      btn.onclick = () => pickSpellLetter(parseInt(btn.dataset.si));
+    });
+    speak(wl.spellWord);
+  }
+
+  function newSpell() {
+    const all = allWordsFlat();
+    wl.spellWord = all[Math.floor(Math.random()*all.length)];
+    wl.spellInput = new Array(wl.spellWord.length).fill(null);
+    const extra = [];
+    const alpha = 'abcdefghijklmnopqrstuvwxyz';
+    while (extra.length < Math.min(3, 26 - new Set(wl.spellWord).size)) {
+      const r = alpha[Math.floor(Math.random()*26)];
+      if (!wl.spellWord.includes(r) && !extra.includes(r)) extra.push(r);
+    }
+    wl.spellLetters = shuffle([...wl.spellWord.split(''), ...extra]);
+    wl.spellUsed = new Array(wl.spellLetters.length).fill(false);
+  }
+
+  function clearSpell() {
+    wl.spellInput = new Array(wl.spellWord.length).fill(null);
+    wl.spellUsed = new Array(wl.spellLetters.length).fill(false);
+  }
+
+  function pickSpellLetter(si) {
+    if (wl.spellUsed[si]) return;
+    const slot = wl.spellInput.indexOf(null);
+    if (slot === -1) return;
+    wl.spellInput[slot] = wl.spellLetters[si];
+    wl.spellUsed[si] = true;
+    if (!wl.spellInput.includes(null)) {
+      const correct = wl.spellInput.join('') === wl.spellWord;
+      if (correct) {
+        state[stateKey].correct++;
+        addStars(2);
+        if (nextLevel) tryUnlock(nextLevel);
+        saveState();
+        confetti();
+        // Show correct state briefly
+        renderSpell();
+        // Mark slots correct
+        document.querySelectorAll('#wlBody'+levelNum+' .spell-slot').forEach(s => s.classList.add('correct-slot'));
+        setTimeout(() => { wl.spellWord = null; renderSpell(); }, 1500);
+        return;
+      } else {
+        renderSpell();
+        document.querySelectorAll('#wlBody'+levelNum+' .spell-slot').forEach(s => s.classList.add('wrong-slot'));
+        setTimeout(() => { clearSpell(); renderSpell(); }, 1000);
+        return;
+      }
+    }
+    renderSpell();
+  }
+
+  return render;
+}
+
+function soundOutWord(word, levelNum) {
+  const letters = word.split('');
+  let delay = 0;
+  letters.forEach((ch, i) => {
+    setTimeout(() => {
+      const el = document.getElementById('wlh'+levelNum+'-'+i);
+      if (el) el.classList.add('active');
+      const ph = PHONEME_MAP[ch.toLowerCase()];
+      if (ph) speakPhoneme(ph);
+      setTimeout(() => { if (el) el.classList.remove('active'); }, 500);
+    }, delay);
+    delay += 700;
+  });
+  setTimeout(() => speak(word), delay + 300);
+}
+
+const renderLevel3 = createWordLevel(3, CVC_WORDS, 'l3', 4, 30);
+const renderLevel4 = createWordLevel(4, FOUR_LETTER_WORDS, 'l4', 5, 50);
+const renderLevel5 = createWordLevel(5, FIVE_LETTER_WORDS, 'l5', 6, 50);
+
+// ===================================================================
+// LEVEL 6: SENTENCES
+// ===================================================================
+
+let l6 = { idx:0, mode:'read', scrambleSrc:null, scrambleBank:[], built:[] };
+
+function renderLevel6() {
+  const c = document.getElementById('level6Content');
+  c.innerHTML = `
+    <div class="mode-tabs">
+      <button class="mode-tab ${l6.mode==='read'?'active':''}" data-m="read">Read</button>
+      <button class="mode-tab ${l6.mode==='build'?'active':''}" data-m="build">Build ✏️</button>
+    </div>
+    <p style="text-align:center;margin-bottom:12px;font-weight:600;color:#8a7060">Correct: ${state.l6.correct} ⭐</p>
+    <div id="l6Body"></div>`;
+  c.querySelectorAll('.mode-tab').forEach(b => { b.onclick = () => { l6.mode = b.dataset.m; renderLevel6(); }; });
+  l6.mode === 'read' ? renderL6Read() : renderL6Build();
+}
+
+function renderL6Read() {
+  const s = SENTENCES[l6.idx];
+  const wordsHtml = s.text.split(' ').map((w,i) => `<span class="word-tap" data-w="${w.replace(/[^a-zA-Z']/g,'')}">${w}</span>`).join(' ');
+  const body = document.getElementById('l6Body');
+  body.innerHTML = `
+    <div class="sentence-card">
+      <div class="sentence-emoji">${s.emoji}</div>
+      <div class="sentence-text" id="sentText">${wordsHtml}</div>
+      <div class="sentence-btns">
+        <button class="btn-primary" id="readBtn">🔊 Read to me</button>
+        <button class="btn-sunset" id="soundBtn">🗣 Sound it out</button>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn btn-primary" id="l6Prev">&#9664;</button>
+      <span class="letter-counter">${l6.idx+1} / ${SENTENCES.length}</span>
+      <button class="nav-btn btn-primary" id="l6Next">&#9654;</button>
+    </div>`;
+  body.querySelectorAll('.word-tap').forEach(el => { el.onclick = () => speak(el.dataset.w); });
+  body.querySelector('#readBtn').onclick = () => speak(s.text, 0.7);
+  body.querySelector('#soundBtn').onclick = () => soundOutSentence();
+  body.querySelector('#l6Prev').onclick = () => { l6.idx = (l6.idx-1+SENTENCES.length)%SENTENCES.length; renderL6Read(); };
+  body.querySelector('#l6Next').onclick = () => { l6.idx = (l6.idx+1)%SENTENCES.length; renderL6Read(); };
+}
+
+function soundOutSentence() {
+  const words = SENTENCES[l6.idx].text.split(' ');
+  const els = document.querySelectorAll('#sentText .word-tap');
+  let delay = 0;
+  words.forEach((w, i) => {
+    setTimeout(() => {
+      if (els[i]) els[i].classList.add('highlight');
+      speak(w.replace(/[^a-zA-Z']/g,''), 0.65);
+      setTimeout(() => { if (els[i]) els[i].classList.remove('highlight'); }, 600);
+    }, delay);
+    delay += 900;
+  });
+}
+
+function renderL6Build() {
+  if (!l6.scrambleSrc) newScramble();
+  const s = l6.scrambleSrc;
+  const body = document.getElementById('l6Body');
+  body.innerHTML = `
+    <div class="sentence-card">
+      <div class="sentence-emoji">${s.emoji}</div>
+      <div class="scramble-target">Put the words in order:</div>
+      <button class="btn-primary" id="scrambleHear" style="margin-bottom:12px">🔊 Hear it</button>
+      <div class="scramble-built" id="builtArea">${l6.built.map((w,i) => `<span class="scramble-word in-sentence" data-bi="${i}">${w}</span>`).join('')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center" id="bankArea">${l6.scrambleBank.map((w,i) => `<span class="scramble-word in-bank" data-ki="${i}">${w}</span>`).join('')}</div>
+    </div>`;
+  body.querySelector('#scrambleHear').onclick = () => speak(s.text, 0.7);
+  body.querySelectorAll('.in-bank').forEach(el => {
+    el.onclick = () => {
+      const ki = parseInt(el.dataset.ki);
+      l6.built.push(l6.scrambleBank.splice(ki, 1)[0]);
+      checkScramble();
+      renderL6Build();
+    };
+  });
+  body.querySelectorAll('.in-sentence').forEach(el => {
+    el.onclick = () => {
+      const bi = parseInt(el.dataset.bi);
+      l6.scrambleBank.push(l6.built.splice(bi, 1)[0]);
+      renderL6Build();
+    };
+  });
+  speak(s.text, 0.7);
+}
+
+function newScramble() {
+  l6.scrambleSrc = SENTENCES[Math.floor(Math.random()*SENTENCES.length)];
+  l6.scrambleBank = shuffle(l6.scrambleSrc.text.split(' '));
+  l6.built = [];
+}
+
+function checkScramble() {
+  if (l6.scrambleBank.length === 0) {
+    if (l6.built.join(' ') === l6.scrambleSrc.text) {
+      state.l6.correct++;
+      addStars(3);
+      saveState();
+      confetti();
+      setTimeout(() => { l6.scrambleSrc = null; renderL6Build(); }, 1500);
+    } else {
+      setTimeout(() => { l6.scrambleSrc = null; renderL6Build(); }, 800);
+    }
+  }
+}
+
+// ===================================================================
+// UTILS
+// ===================================================================
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ===================================================================
+// INIT
+// ===================================================================
+
+state = loadState();
+saveState();
+renderHome();
+</script>
+</body>
+</html>
