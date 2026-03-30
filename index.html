@@ -1506,9 +1506,18 @@ function shuffle(arr) {
 // INIT
 // ===================================================================
 
-state = loadState();
-saveState();
-renderHome();
+try {
+  document.title = 'INIT START';
+  state = loadState();
+  saveState();
+  document.title = 'BEFORE RENDER';
+  renderHome();
+  document.title = 'RENDER DONE';
+} catch(e) {
+  document.body.insertAdjacentHTML('afterbegin',
+    '<pre style="color:red;padding:20px;font-size:16px;background:#fff;z-index:9999;position:relative;white-space:pre-wrap">'
+    + 'INIT ERROR: ' + e.message + '\n' + (e.stack||'') + '</pre>');
+}
 </script>
 </body>
 </html>
