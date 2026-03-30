@@ -845,7 +845,7 @@ function loadState() {
     const s = JSON.parse(raw);
     if (!s.unlockedLevels) return defaultState();
     return s;
-  } catch { return defaultState(); }
+  } catch(e) { return defaultState(); }
 }
 
 function saveState() {
@@ -905,34 +905,52 @@ function showUnlockBanner(id) {
 // ===================================================================
 
 let preferredVoice = null;
+let speechUnlocked = false;
+
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return;
+  preferredVoice = voices.find(v => v.name === 'Samantha' && v.lang.startsWith('en'))
+    || voices.find(v => v.lang.startsWith('en-US') && /female|samantha|karen|victoria/i.test(v.name))
+    || voices.find(v => v.lang.startsWith('en-US'))
+    || voices.find(v => v.lang.startsWith('en'))
+    || voices[0] || null;
+}
 
 function initVoice() {
-  const pick = () => {
-    const voices = speechSynthesis.getVoices();
-    preferredVoice = voices.find(v => v.name === 'Samantha' && v.lang.startsWith('en'))
-      || voices.find(v => v.lang.startsWith('en-US') && /female|samantha|karen|victoria/i.test(v.name))
-      || voices.find(v => v.lang.startsWith('en-US'))
-      || voices.find(v => v.lang.startsWith('en'))
-      || voices[0] || null;
-  };
-  pick();
-  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pick;
+  pickVoice();
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pickVoice;
+  // iOS: retry voice loading after a short delay
+  if (!preferredVoice) setTimeout(pickVoice, 250);
 }
 initVoice();
 
+// iOS workaround: speech engine pauses after ~15s idle, periodically poke it
+setInterval(function() {
+  if (speechSynthesis.paused) speechSynthesis.resume();
+}, 5000);
+
 function speak(text, rate, onEnd) {
+  if (!preferredVoice) pickVoice();
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
+  var u = new SpeechSynthesisUtterance(text);
   u.rate = rate || 0.75;
   u.pitch = 1.1;
   if (preferredVoice) u.voice = preferredVoice;
   if (onEnd) u.onend = onEnd;
   speechSynthesis.speak(u);
+  speechUnlocked = true;
+}
+
+// Safe auto-speak: only speaks if user has already tapped something (iOS gesture requirement)
+function autoSpeak(text, rate) {
+  if (speechUnlocked) speak(text, rate);
 }
 
 function speakPhoneme(ph) {
+  if (!preferredVoice) pickVoice();
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(ph);
+  var u = new SpeechSynthesisUtterance(ph);
   u.rate = 0.5;
   u.pitch = 1.05;
   u.volume = 1;
@@ -1153,7 +1171,7 @@ function createWordLevel(levelNum, wordData, stateKey, nextLevel, threshold) {
   const wl = { family: Object.keys(wordData)[0], mode:'browse', idx:0, matchWord:null, matchOpts:[], spellWord:null, spellInput:[], spellLetters:[], spellUsed:[] };
 
   function allWords() { return wordData[wl.family] || []; }
-  function allWordsFlat() { return Object.values(wordData).flat(); }
+  function allWordsFlat() { var r=[]; Object.keys(wordData).forEach(function(k){r=r.concat(wordData[k])}); return r; }
 
   function render() {
     const c = document.getElementById('level'+levelNum+'Content');
@@ -1234,7 +1252,7 @@ function createWordLevel(levelNum, wordData, stateKey, nextLevel, threshold) {
         setTimeout(() => { wl.matchWord = null; renderMatch(); }, 1200);
       };
     });
-    speak(wl.matchWord);
+    autoSpeak(wl.matchWord);
   }
 
   function newMatch() {
@@ -1269,7 +1287,7 @@ function createWordLevel(levelNum, wordData, stateKey, nextLevel, threshold) {
     body.querySelectorAll('.spell-letter-btn').forEach(btn => {
       btn.onclick = () => pickSpellLetter(parseInt(btn.dataset.si));
     });
-    speak(wl.spellWord);
+    autoSpeak(wl.spellWord);
   }
 
   function newSpell() {
@@ -1430,7 +1448,7 @@ function renderL6Build() {
       renderL6Build();
     };
   });
-  speak(s.text, 0.7);
+  autoSpeak(s.text, 0.7);
 }
 
 function newScramble() {
