@@ -906,40 +906,47 @@ function showUnlockBanner(id) {
 
 let preferredVoice = null;
 let speechUnlocked = false;
+const hasSpeech = typeof speechSynthesis !== 'undefined';
 
 function pickVoice() {
-  const voices = speechSynthesis.getVoices();
-  if (!voices.length) return;
-  preferredVoice = voices.find(v => v.name === 'Samantha' && v.lang.startsWith('en'))
-    || voices.find(v => v.lang.startsWith('en-US') && /female|samantha|karen|victoria/i.test(v.name))
-    || voices.find(v => v.lang.startsWith('en-US'))
-    || voices.find(v => v.lang.startsWith('en'))
-    || voices[0] || null;
+  if (!hasSpeech) return;
+  try {
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return;
+    preferredVoice = voices.find(v => v.name === 'Samantha' && v.lang.startsWith('en'))
+      || voices.find(v => v.lang.startsWith('en-US') && /female|samantha|karen|victoria/i.test(v.name))
+      || voices.find(v => v.lang.startsWith('en-US'))
+      || voices.find(v => v.lang.startsWith('en'))
+      || voices[0] || null;
+  } catch(e) {}
 }
 
 function initVoice() {
+  if (!hasSpeech) return;
   pickVoice();
-  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pickVoice;
-  // iOS: retry voice loading after a short delay
+  try { if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pickVoice; } catch(e) {}
   if (!preferredVoice) setTimeout(pickVoice, 250);
 }
 initVoice();
 
 // iOS workaround: speech engine pauses after ~15s idle, periodically poke it
-setInterval(function() {
-  if (speechSynthesis.paused) speechSynthesis.resume();
+if (hasSpeech) setInterval(function() {
+  try { if (speechSynthesis.paused) speechSynthesis.resume(); } catch(e) {}
 }, 5000);
 
 function speak(text, rate, onEnd) {
-  if (!preferredVoice) pickVoice();
-  speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(text);
-  u.rate = rate || 0.75;
-  u.pitch = 1.1;
-  if (preferredVoice) u.voice = preferredVoice;
-  if (onEnd) u.onend = onEnd;
-  speechSynthesis.speak(u);
-  speechUnlocked = true;
+  if (!hasSpeech) { if (onEnd) onEnd(); return; }
+  try {
+    if (!preferredVoice) pickVoice();
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.rate = rate || 0.75;
+    u.pitch = 1.1;
+    if (preferredVoice) u.voice = preferredVoice;
+    if (onEnd) u.onend = onEnd;
+    speechSynthesis.speak(u);
+    speechUnlocked = true;
+  } catch(e) { if (onEnd) onEnd(); }
 }
 
 // Safe auto-speak: only speaks if user has already tapped something (iOS gesture requirement)
@@ -948,14 +955,17 @@ function autoSpeak(text, rate) {
 }
 
 function speakPhoneme(ph) {
-  if (!preferredVoice) pickVoice();
-  speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(ph);
-  u.rate = 0.5;
-  u.pitch = 1.05;
-  u.volume = 1;
-  if (preferredVoice) u.voice = preferredVoice;
-  speechSynthesis.speak(u);
+  if (!hasSpeech) return;
+  try {
+    if (!preferredVoice) pickVoice();
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(ph);
+    u.rate = 0.5;
+    u.pitch = 1.05;
+    u.volume = 1;
+    if (preferredVoice) u.voice = preferredVoice;
+    speechSynthesis.speak(u);
+  } catch(e) {}
 }
 
 // ===================================================================
@@ -1000,7 +1010,7 @@ function showScreen(id) {
 }
 
 function goHome() {
-  speechSynthesis.cancel();
+  if (hasSpeech) try { speechSynthesis.cancel(); } catch(e) {}
   showScreen('homeScreen');
   renderHome();
 }
