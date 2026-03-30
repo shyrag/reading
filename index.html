@@ -849,7 +849,7 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem('readingWonderland', JSON.stringify(state));
+  try { localStorage.setItem('readingWonderland', JSON.stringify(state)); } catch(e) {}
   document.getElementById('starCount').textContent = state.stars;
 }
 
