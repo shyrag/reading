@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6BB8E8"/>
+      <stop offset="100%" stop-color="#C4A8E0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" ry="96" fill="#FFF8EC"/>
+  <rect x="24" y="24" width="464" height="464" rx="80" ry="80" fill="url(#bg)"/>
+  <!-- Open book -->
+  <g transform="translate(256,270)">
+    <!-- Left page -->
+    <path d="M-10,60 L-10,-80 Q-10,-100 -30,-100 L-140,-100 Q-160,-100 -160,-80 L-160,60 Q-160,80 -140,80 L-30,80 Q-10,80 -10,60Z" fill="white" opacity="0.95"/>
+    <!-- Right page -->
+    <path d="M10,60 L10,-80 Q10,-100 30,-100 L140,-100 Q160,-100 160,-80 L160,60 Q160,80 140,80 L30,80 Q10,80 10,60Z" fill="white" opacity="0.9"/>
+    <!-- Spine shadow -->
+    <rect x="-10" y="-100" width="20" height="180" rx="4" fill="white" opacity="0.7"/>
+    <!-- Text lines on left page -->
+    <rect x="-140" y="-70" width="100" height="8" rx="4" fill="#6BB8E8" opacity="0.5"/>
+    <rect x="-140" y="-50" width="80" height="8" rx="4" fill="#C4A8E0" opacity="0.5"/>
+    <rect x="-140" y="-30" width="90" height="8" rx="4" fill="#6BB8E8" opacity="0.5"/>
+    <rect x="-140" y="-10" width="70" height="8" rx="4" fill="#C4A8E0" opacity="0.5"/>
+    <!-- Star on right page -->
+    <text x="85" y="10" font-size="80" text-anchor="middle" dominant-baseline="central">&#11088;</text>
+  </g>
+  <!-- Letter R at top -->
+  <text x="256" y="130" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="90" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="central" opacity="0.95">R</text>
+</svg>

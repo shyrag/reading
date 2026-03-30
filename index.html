@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#6BB8E8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
 <title>Reading Wonderland</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
@@ -600,14 +605,6 @@ button:active { transform: scale(0.95); }
 <div id="level5Screen" class="screen"><div class="level-container" id="level5Content"></div></div>
 <div id="level6Screen" class="screen"><div class="level-container" id="level6Content"></div></div>
 
-<script>
-window.onerror = function(msg, src, line, col, err) {
-  document.body.insertAdjacentHTML('afterbegin',
-    '<pre style="color:red;padding:20px;font-size:14px;background:#fff;z-index:9999;position:relative">'
-    + 'ERROR: ' + msg + '\nLine: ' + line + ', Col: ' + col
-    + (err && err.stack ? '\n' + err.stack : '') + '</pre>');
-};
-</script>
 <script>
 // ===================================================================
 // DATA
@@ -1506,17 +1503,12 @@ function shuffle(arr) {
 // INIT
 // ===================================================================
 
-try {
-  document.title = 'INIT START';
-  state = loadState();
-  saveState();
-  document.title = 'BEFORE RENDER';
-  renderHome();
-  document.title = 'RENDER DONE';
-} catch(e) {
-  document.body.insertAdjacentHTML('afterbegin',
-    '<pre style="color:red;padding:20px;font-size:16px;background:#fff;z-index:9999;position:relative;white-space:pre-wrap">'
-    + 'INIT ERROR: ' + e.message + '\n' + (e.stack||'') + '</pre>');
+state = loadState();
+saveState();
+renderHome();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
 }
 </script>
 </body>
