@@ -601,6 +601,14 @@ button:active { transform: scale(0.95); }
 <div id="level6Screen" class="screen"><div class="level-container" id="level6Content"></div></div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  document.body.insertAdjacentHTML('afterbegin',
+    '<pre style="color:red;padding:20px;font-size:14px;background:#fff;z-index:9999;position:relative">'
+    + 'ERROR: ' + msg + '\nLine: ' + line + ', Col: ' + col
+    + (err && err.stack ? '\n' + err.stack : '') + '</pre>');
+};
+</script>
+<script>
 // ===================================================================
 // DATA
 // ===================================================================
